@@ -7,15 +7,62 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080c0a;--surface:#0f1712;--surface2:#141f18;--green:#22c55e;--green-glow:rgba(34,197,94,0.10);--green-border:rgba(34,197,94,0.22);--text:#e8f0eb;--muted:#7a9485;--red-bg:rgba(239,68,68,0.08);--amber-bg:rgba(245,158,11,0.08);--win-bg:rgba(34,197,94,0.08);--border:rgba(255,255,255,0.06);--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+:root{
+  --bg:#080c0a;--surface:#0f1712;--surface2:#1a2420;
+  --green:#22c55e;--green-glow:rgba(34,197,94,0.12);--green-border:rgba(34,197,94,0.30);
+  /* dark mode: all body text is white, supporting text slightly dimmed */
+  --text:#ffffff;--muted:#ffffff;
+  --red-bg:rgba(239,68,68,0.10);--amber-bg:rgba(245,158,11,0.10);--win-bg:rgba(34,197,94,0.10);
+  --border:rgba(255,255,255,0.12);
+  --callout-critical-text:#ffb3b3;--callout-warning-text:#ffe08a;--callout-win-text:#a7f3c0;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+  /* later/post-launch uses a blue-tinted neutral — distinct from green for colour-blind users */
+  --later-text:#94a3b8;--later-bg:rgba(30,35,60,.65);--later-border:rgba(148,163,184,.25);
+  /* tags — use solid enough bg so text is readable in both themes */
+  --tag-red-bg:#7f1d1d;--tag-red-text:#fecaca;
+  --tag-amber-bg:#78350f;--tag-amber-text:#fde68a;
+  --tag-green-bg:#14532d;--tag-green-text:#bbf7d0;
+  /* mockup annotation text */
+  --annotation-text:#a7f3c0;
+  /* mockup trust badge */
+  --mw-badge-text:#a7f3c0;
+}
+html[data-theme="light"]{
+  --bg:#f5f7f5;--surface:#ffffff;--surface2:#eef3ee;
+  --green:#16a34a;--green-glow:rgba(22,163,74,0.08);--green-border:rgba(22,163,74,0.35);
+  --text:#0f1f14;--muted:#1a3d28;
+  --red-bg:rgba(220,38,38,0.08);--amber-bg:rgba(217,119,6,0.08);--win-bg:rgba(22,163,74,0.08);
+  --border:rgba(0,0,0,0.12);
+  --callout-critical-text:#7f1d1d;--callout-warning-text:#78350f;--callout-win-text:#14532d;
+  --later-text:#475569;--later-bg:rgba(226,232,240,.5);--later-border:rgba(100,116,139,.3);
+  /* light mode tags — dark-bg chips so they read clearly on white */
+  --tag-red-bg:#dc2626;--tag-red-text:#ffffff;
+  --tag-amber-bg:#b45309;--tag-amber-text:#ffffff;
+  --tag-green-bg:#15803d;--tag-green-text:#ffffff;
+  /* mockup annotation text — dark enough on green tint */
+  --annotation-text:#14532d;
+  /* mockup trust badge — dark text on light green */
+  --mw-badge-text:#14532d;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,10,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden;transition:background .3s,color .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,10,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:0;transition:background .3s;height:auto}
+html[data-theme="light"] nav{background:rgba(245,247,245,.95)}
+.nav-row-top{display:flex;align-items:center;justify-content:space-between;padding:.55rem 2rem;border-bottom:1px solid var(--border)}
+.nav-row-bottom{display:flex;align-items:center;justify-content:space-between;padding:.35rem 2rem}
 .nav-brand{font-family:var(--font-head);font-weight:800;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
-.nav-links{display:flex;gap:.2rem;list-style:none}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:500;padding:.3rem .65rem;border-radius:4px;transition:color .2s,background .2s}
+.nav-links{display:flex;gap:.15rem;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.76rem;font-weight:500;padding:.28rem .6rem;border-radius:4px;transition:color .2s,background .2s}
 .nav-links a:hover{color:var(--text);background:var(--border)}
+.nav-actions{display:flex;align-items:center;gap:.5rem}
+.btn-icon{display:flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;padding:.3rem .7rem;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--font-body)}
+.btn-icon:hover{border-color:var(--green-border);color:var(--text);background:var(--green-glow)}
+.btn-icon svg{width:13px;height:13px;flex-shrink:0}
+.btn-pdf{border-color:var(--green-border);color:var(--green);background:var(--green-glow)}
+.btn-pdf:hover{background:var(--green);color:#fff;border-color:var(--green)}
+/* push page content below the two-row nav */
+body{padding-top:88px}
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 4rem 5rem;position:relative;overflow:hidden}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(34,197,94,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 100%,black 30%,transparent 100%)}
 .hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(34,197,94,.07) 0%,transparent 70%);pointer-events:none}
@@ -34,7 +81,7 @@ section{padding:5.5rem 0;border-top:1px solid var(--border);position:relative;z-
 .section-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
 .section-eyebrow .num{font-family:var(--font-head);font-size:.62rem;border:1px solid var(--green-border);border-radius:3px;padding:.1rem .4rem;color:var(--green)}
 h2.section-title{font-family:var(--font-head);font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.6rem}
-.section-desc{color:var(--muted);font-size:.95rem;max-width:580px;margin-bottom:2.5rem;font-weight:300;line-height:1.65}
+.section-desc{color:var(--muted);font-size:.95rem;max-width:580px;margin-bottom:2.5rem;font-weight:400;line-height:1.65}
 h3.sub{font-family:var(--font-head);font-size:1rem;font-weight:700;margin:2.25rem 0 .85rem;color:var(--text);letter-spacing:-.01em}
 p{color:var(--muted);margin-bottom:.9rem;font-size:.92rem;line-height:1.75}
 .launch-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .65rem;border-radius:3px;margin-bottom:1.5rem}
@@ -44,54 +91,58 @@ p{color:var(--muted);margin-bottom:.9rem;font-size:.92rem;line-height:1.75}
 .callout-icon{font-size:1rem;line-height:1.7;flex-shrink:0}
 .callout-label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
 .callout-body{font-size:.88rem;line-height:1.65}
-.callout.critical{background:var(--red-bg);border-color:rgba(239,68,68,.22)}
+.callout.critical{background:var(--red-bg);border-color:rgba(239,68,68,.30)}
 .callout.critical .callout-label{color:#f87171}
-.callout.critical .callout-body{color:#fca5a5}
-.callout.warning{background:var(--amber-bg);border-color:rgba(245,158,11,.22)}
-.callout.warning .callout-label{color:#fbbf24}
-.callout.warning .callout-body{color:#fde68a}
+.callout.critical .callout-body{color:var(--callout-critical-text)}
+.callout.warning{background:var(--amber-bg);border-color:rgba(245,158,11,.30)}
+.callout.warning .callout-label{color:#f59e0b}
+.callout.warning .callout-body{color:var(--callout-warning-text)}
 .callout.win{background:var(--win-bg);border-color:var(--green-border)}
 .callout.win .callout-label{color:var(--green)}
-.callout.win .callout-body{color:#86efac}
-.rec-list{list-style:none;margin:.6rem 0 1.5rem;display:flex;flex-direction:column;gap:.45rem}
-.rec-list li{display:flex;gap:.7rem;align-items:flex-start;font-size:.88rem;color:var(--muted);line-height:1.6}
-.rec-list li::before{content:'→';color:var(--green);flex-shrink:0;font-weight:700;margin-top:.05rem}
-.rec-list li.later-item::before{color:#64748b}
-.rec-list li.later-item{color:#64748b}
+.callout.win .callout-body{color:var(--callout-win-text)}
+/* Rec list — clean flex rows, no grid pseudo-element conflicts */
+.rec-list{list-style:none;margin:.75rem 0 1.75rem;display:flex;flex-direction:column;gap:.5rem}
+.rec-list li{display:flex;gap:0;font-size:.91rem;color:var(--text);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.rec-list li::before{content:'→';color:var(--green);font-weight:800;font-size:.85rem;flex-shrink:0;padding:.75rem .75rem .75rem 1rem;background:var(--surface2);border-right:1px solid var(--border);display:flex;align-items:flex-start;padding-top:.8rem}
+.rec-list li .rec-text-wrap{padding:.75rem 1rem;flex:1}
+.rec-list li strong{color:var(--text);font-weight:700}
+.rec-list li em{color:var(--green);font-style:normal}
+.rec-list li.later-item{background:transparent;border-color:transparent}
+.rec-list li.later-item::before{color:var(--later-text);background:transparent;border-right:none}
+.rec-list li.later-item .rec-text-wrap{color:var(--later-text);padding-left:0}
 .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.84rem}
-.data-table th{text-align:left;padding:.6rem .8rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border)}
+.data-table th{text-align:left;padding:.6rem .8rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--text);border-bottom:1px solid var(--border)}
 .data-table td{padding:.7rem .8rem;vertical-align:top;border-bottom:1px solid var(--border);color:var(--muted);line-height:1.5}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:hover td{background:var(--surface2)}
-.data-table .td-issue{color:var(--text);font-size:.86rem}
+.data-table .td-issue{color:var(--text);font-size:.86rem;font-weight:500}
 .data-table .td-rec{color:var(--muted);font-size:.83rem}
 .fw-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.83rem}
-.fw-table th{padding:.6rem .9rem;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:left}
+.fw-table th{padding:.6rem .9rem;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text);border-bottom:1px solid var(--border);text-align:left;font-weight:600}
 .fw-table td{padding:.8rem .9rem;vertical-align:top;border-bottom:1px solid var(--border);color:var(--muted);line-height:1.55}
-.fw-table td:first-child{color:var(--green);font-weight:600;font-size:.78rem;white-space:nowrap}
+.fw-table td:first-child{color:var(--green);font-weight:700;font-size:.8rem;white-space:nowrap}
 .fw-table tr:last-child td{border-bottom:none}
 .fw-table tr:hover td{background:var(--surface2)}
-.tag{display:inline-flex;align-items:center;gap:.2rem;font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.18rem .48rem;border-radius:3px;white-space:nowrap}
-.tag.p1{background:rgba(239,68,68,.14);color:#f87171}
-.tag.p2{background:rgba(245,158,11,.14);color:#fbbf24}
-.tag.missing{background:rgba(239,68,68,.12);color:#f87171}
-.tag.weak{background:rgba(245,158,11,.12);color:#fbbf24}
-.tag.present{background:rgba(34,197,94,.12);color:#4ade80}
+.tag{display:inline-flex;align-items:center;gap:.2rem;font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.22rem .55rem;border-radius:3px;white-space:nowrap}
+.tag.p1{background:var(--tag-red-bg);color:var(--tag-red-text)}
+.tag.p2{background:var(--tag-amber-bg);color:var(--tag-amber-text)}
+.tag.missing{background:var(--tag-red-bg);color:var(--tag-red-text)}
+.tag.weak{background:var(--tag-amber-bg);color:var(--tag-amber-text)}
+.tag.present{background:var(--tag-green-bg);color:var(--tag-green-text)}
 .checklist-section{margin:1.5rem 0}
 .checklist-group-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:700;margin:1.5rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid var(--green-border)}
-.checklist-group-label.later-label{color:#64748b;border-color:rgba(100,116,139,.2)}
+.checklist-group-label.later-label{color:var(--later-text);border-color:var(--later-border)}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-.check-item{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:.82rem;color:var(--muted);line-height:1.4;transition:border-color .2s,background .2s;cursor:pointer}
+.check-item{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:.82rem;color:var(--text);line-height:1.4;transition:border-color .2s,background .2s;cursor:pointer}
 .check-item:hover{border-color:var(--green-border);background:var(--surface2)}
 .check-item.checked{border-color:var(--green-border);background:var(--green-glow)}
 .check-item.checked .check-box{background:var(--green);border-color:var(--green)}
-.check-item.checked .check-box::after{content:'✓';color:var(--bg);font-size:.6rem;font-weight:900}
-.check-item.checked .check-label{color:var(--text)}
+.check-item.checked .check-box::after{content:'✓';color:#fff;font-size:.6rem;font-weight:900}
 .check-box{width:15px;height:15px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:.1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .faq-item{border-bottom:1px solid var(--border);padding:.9rem 0}
-.faq-q{font-size:.88rem;font-weight:500;color:var(--text);margin-bottom:.35rem;padding-left:1.2rem;position:relative}
+.faq-q{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.35rem;padding-left:1.2rem;position:relative}
 .faq-q::before{content:'Q';position:absolute;left:0;font-size:.65rem;color:var(--green);font-weight:800;top:.1rem}
-.faq-a{font-size:.85rem;color:var(--muted);padding-left:1.2rem;line-height:1.6;margin:0}
+.faq-a{font-size:.87rem;color:var(--muted);padding-left:1.2rem;line-height:1.6;margin:0}
 .mockup-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
 .mockup-bar{background:var(--surface2);padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
 .mockup-dot{width:8px;height:8px;border-radius:50%}
@@ -124,9 +175,9 @@ p{color:var(--muted);margin-bottom:.9rem;font-size:.92rem;line-height:1.75}
 .mw-trust{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
 .mw-trust-item{font-size:.6rem;color:var(--muted);display:flex;align-items:center;gap:.25rem}
 .mw-trust-item span{color:var(--green)}
-.mw-annotation{display:flex;align-items:flex-start;gap:.5rem;margin:.5rem 0;padding:.5rem .75rem;background:rgba(34,197,94,.06);border-left:2px solid var(--green);border-radius:0 4px 4px 0}
+.mw-annotation{display:flex;align-items:flex-start;gap:.5rem;margin:.5rem 0;padding:.5rem .75rem;background:rgba(34,197,94,.07);border-left:2px solid var(--green);border-radius:0 4px 4px 0}
 .mw-annotation-icon{color:var(--green);font-size:.75rem;flex-shrink:0;margin-top:.05rem}
-.mw-annotation-text{font-size:.72rem;color:#86efac;line-height:1.45}
+.mw-annotation-text{font-size:.72rem;color:var(--annotation-text);line-height:1.45}
 .mw-dropdown-demo{position:relative;display:inline-block;margin:1rem 0}
 .mw-dropdown-trigger{background:var(--surface2);border:1px solid var(--green-border);border-radius:5px;padding:.5rem 1rem;font-size:.8rem;color:var(--text);display:flex;align-items:center;gap:.4rem;cursor:default}
 .mw-dropdown-trigger::after{content:'▾';color:var(--green);font-size:.6rem}
@@ -142,34 +193,61 @@ p{color:var(--muted);margin-bottom:.9rem;font-size:.92rem;line-height:1.75}
 .mw-pdp-price{font-size:1.1rem;font-weight:700;color:var(--green)}
 .mw-pdp-hook{font-size:.7rem;color:var(--muted);font-style:italic;line-height:1.5}
 .mw-pdp-trust{display:flex;flex-wrap:wrap;gap:.3rem}
-.mw-trust-badge{font-size:.58rem;background:var(--green-glow);border:1px solid var(--green-border);color:#86efac;border-radius:3px;padding:.15rem .4rem;display:flex;align-items:center;gap:.2rem}
+.mw-trust-badge{font-size:.58rem;background:var(--green-glow);border:1px solid var(--green-border);color:var(--mw-badge-text);border-radius:3px;padding:.15rem .4rem;display:flex;align-items:center;gap:.2rem}
 .mw-pdp-btn{background:var(--green);color:var(--bg);font-size:.72rem;font-weight:800;padding:.55rem 1rem;border-radius:5px;text-align:center;letter-spacing:.04em}
 .mw-pdp-faq{font-size:.65rem;color:var(--muted);border-top:1px solid var(--border);padding-top:.5rem}
 .mw-pdp-faq-q{color:var(--text);margin-bottom:.15rem;font-weight:500}
 .mw-pdp-faq-a{color:var(--muted);margin-bottom:.4rem}
-.later-block{background:rgba(30,35,50,.5);border:1px solid rgba(100,116,139,.15);border-radius:8px;padding:1.5rem;margin-top:2.5rem}
-.later-block-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.later-block-label::before{content:'';display:block;width:20px;height:1px;background:#64748b}
-.progress-bar{position:fixed;top:58px;left:0;height:2px;background:var(--green);z-index:99;transition:width .1s;box-shadow:0 0 8px rgba(34,197,94,.4)}
+.later-block{background:var(--later-bg);border:1px dashed var(--later-border);border-left:3px solid var(--later-text);border-radius:0 8px 8px 0;padding:1.25rem 1.5rem;margin-top:2rem}
+.later-block-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--later-text);font-weight:700;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
+.later-block-label::before{content:'📅';font-size:.7rem}
+.progress-bar{position:fixed;top:88px;left:0;height:2px;background:var(--green);z-index:99;transition:width .1s;box-shadow:0 0 8px rgba(34,197,94,.4)}
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
+/* Trust table — 3-col layout matching scope table */
+.trust-table{width:100%;border-collapse:collapse;margin:.75rem 0 1.75rem;font-size:.87rem}
+.trust-table th{text-align:left;padding:.65rem .9rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--text);border-bottom:2px solid var(--green-border)}
+.trust-table th:first-child{width:28%}
+.trust-table th:nth-child(2){width:20%}
+.trust-table td{padding:.85rem .9rem;vertical-align:top;border-bottom:1px solid var(--border);color:var(--text);line-height:1.55}
+.trust-table td:first-child{font-weight:700;display:flex;align-items:center;gap:.55rem}
+.trust-table td .badge-icon{font-size:1.1rem;flex-shrink:0}
+.trust-table td:nth-child(2){color:var(--green);font-weight:600;font-size:.82rem}
+.trust-table td:nth-child(3){color:var(--muted)}
+.trust-table tr:last-child td{border-bottom:none}
+.trust-table tr:hover td{background:var(--surface2)}
 footer{border-top:1px solid var(--border);padding:2.5rem 0;text-align:center;color:var(--muted);font-size:.8rem;position:relative;z-index:1}
 footer strong{color:var(--green)}
-@media(max-width:768px){.hero{padding:0 1.5rem 4rem}.wrapper{padding:0 1.25rem}nav{padding:0 1.25rem}.nav-links{display:none}section{padding:4rem 0}.checklist{grid-template-columns:1fr}.mw-pdp{grid-template-columns:1fr}.mw-cats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.hero{padding:0 1.5rem 4rem}.wrapper{padding:0 1.25rem}nav{padding:0 1.25rem}.nav-links{display:none}section{padding:4rem 0}.checklist{grid-template-columns:1fr}.mw-pdp{grid-template-columns:1fr}.mw-cats{grid-template-columns:repeat(2,1fr)}.trust-grid{grid-template-columns:1fr}.nav-actions .btn-icon span{display:none}}
+@media print{nav,.progress-bar{display:none!important}body{background:#fff;color:#000}.wrapper{max-width:100%}section{page-break-inside:avoid}}
 </style>
 </head>
 <body>
 <div class="progress-bar" id="progress"></div>
 <nav>
-  <div class="nav-brand">NRG+ &middot; Pre-Launch Audit</div>
-  <ul class="nav-links">
-    <li><a href="#scope">Scope</a></li>
-    <li><a href="#homepage">Homepage</a></li>
-    <li><a href="#nav-section">Navigation</a></li>
-    <li><a href="#pdp">Product Pages</a></li>
-    <li><a href="#checklist">Checklist</a></li>
-    <li><a href="#later">Post-Launch</a></li>
-  </ul>
+  <div class="nav-row-top">
+    <div class="nav-brand">NRG+ &middot; Pre-Launch Audit</div>
+    <div class="nav-actions">
+      <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <span id="themeLabel">Light mode</span>
+      </button>
+      <button class="btn-icon btn-pdf" onclick="exportPDF()" title="Export as PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-row-bottom">
+    <ul class="nav-links">
+      <li><a href="#scope">Scope</a></li>
+      <li><a href="#homepage">Homepage</a></li>
+      <li><a href="#nav-section">Navigation</a></li>
+      <li><a href="#pdp">Product Pages</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+      <li><a href="#later">Post-Launch</a></li>
+    </ul>
+  </div>
 </nav>
 
 <div class="hero">
@@ -226,10 +304,10 @@ footer strong{color:var(--green)}
 
     <h3 class="sub">What to change</h3>
     <ul class="rec-list">
-      <li>Add a <strong style="color:var(--text)">primary CTA button</strong> in the hero section &mdash; e.g. <em>&ldquo;Shop All Products&rdquo;</em> or <em>&ldquo;Find Your Chip&rdquo;</em>. Sits below the existing tagline, no redesign needed.</li>
-      <li>Add a <strong style="color:var(--text)">plain-English one-liner</strong> beneath the headline: e.g. <em>&ldquo;Wearable bio-signalling chips for performance, recovery and wellbeing.&rdquo;</em></li>
-      <li>Move the <strong style="color:var(--text)">4 category blocks</strong> (Sports, Lifestyle, Pain Relief, Recovery) higher &mdash; the first thing visible after the hero, each linking directly to its category page.</li>
-      <li>Add a <strong style="color:var(--text)">trust strip</strong> beneath the category blocks: <em>&ldquo;Drug-Free &middot; Non-Invasive &middot; 14-Day Money-Back &middot; UK Company&rdquo;</em> &mdash; one line, no design effort needed.</li>
+      <li><div class="rec-text-wrap">Add a <strong style="color:var(--text)">primary CTA button</strong> in the hero section &mdash; e.g. <em>&ldquo;Shop All Products&rdquo;</em> or <em>&ldquo;Find Your Chip&rdquo;</em>. Sits below the existing tagline, no redesign needed.</div></li>
+      <li><div class="rec-text-wrap">Add a <strong style="color:var(--text)">plain-English one-liner</strong> beneath the headline: e.g. <em>&ldquo;Wearable bio-signalling chips for performance, recovery and wellbeing.&rdquo;</em></div></li>
+      <li><div class="rec-text-wrap">Move the <strong style="color:var(--text)">4 category blocks</strong> (Sports, Lifestyle, Pain Relief, Recovery) higher &mdash; the first thing visible after the hero, each linking directly to its category page.</div></li>
+      <li><div class="rec-text-wrap">Add a <strong style="color:var(--text)">trust strip</strong> beneath the category blocks: <em>&ldquo;Drug-Free &middot; Non-Invasive &middot; 14-Day Money-Back &middot; UK Company&rdquo;</em> &mdash; one line, no design effort needed.</div></li>
     </ul>
 
     <h3 class="sub">Suggested homepage structure</h3>
@@ -287,9 +365,9 @@ footer strong{color:var(--green)}
 
     <h3 class="sub">What to leave alone for launch</h3>
     <ul class="rec-list">
-      <li class="later-item">The hero video &mdash; it works well for the brand. No changes needed.</li>
-      <li class="later-item">The sector carousel, mission statement, and testimonial section &mdash; can stay as-is and be refined post-launch.</li>
-      <li class="later-item">The newsletter section &mdash; leave it for now. A lead magnet strategy is a post-launch project.</li>
+      <li class="later-item"><div class="rec-text-wrap">The hero video &mdash; it works well for the brand. No changes needed.</div></li>
+      <li class="later-item"><div class="rec-text-wrap">The sector carousel, mission statement, and testimonial section &mdash; can stay as-is and be refined post-launch.</div></li>
+      <li class="later-item"><div class="rec-text-wrap">The newsletter section &mdash; leave it for now. A lead magnet strategy is a post-launch project.</div></li>
     </ul>
   </div>
 </section>
@@ -337,10 +415,10 @@ footer strong{color:var(--green)}
 
     <h3 class="sub">How to set this up in Wix</h3>
     <ul class="rec-list">
-      <li>Go to <strong style="color:var(--text)">Site &amp; App &rarr; Site Pages &amp; Menu &rarr; Main Menu</strong></li>
-      <li>Click the <strong style="color:var(--text)">&ldquo;Products&rdquo;</strong> menu item &rarr; select <em>&ldquo;Add Sub-item&rdquo;</em></li>
-      <li>Add the category pages as sub-items, plus &ldquo;All Products&rdquo; at the bottom</li>
-      <li>The dropdown appears automatically on hover &mdash; no CSS or code required</li>
+      <li><div class="rec-text-wrap">Go to <strong style="color:var(--text)">Site &amp; App &rarr; Site Pages &amp; Menu &rarr; Main Menu</strong></div></li>
+      <li><div class="rec-text-wrap">Click the <strong style="color:var(--text)">&ldquo;Products&rdquo;</strong> menu item &rarr; select <em>&ldquo;Add Sub-item&rdquo;</em></div></li>
+      <li><div class="rec-text-wrap">Add the category pages as sub-items, plus &ldquo;All Products&rdquo; at the bottom</div></li>
+      <li><div class="rec-text-wrap">The dropdown appears automatically on hover &mdash; no CSS or code required</div></li>
     </ul>
     <div class="callout win">
       <div class="callout-icon">&#x2705;</div>
@@ -420,12 +498,37 @@ footer strong{color:var(--green)}
     </div>
 
     <h3 class="sub">Trust badges &mdash; what to include on each page</h3>
-    <ul class="rec-list">
-      <li><strong style="color:var(--text)">&#x2713; 14-Day Money-Back Guarantee</strong> &mdash; the strongest trust signal available right now. It&rsquo;s already the policy; just make it visible at the point of purchase.</li>
-      <li><strong style="color:var(--text)">&#x2713; Drug-Free &amp; Non-Invasive</strong> &mdash; answers the immediate concern of any new visitor: &ldquo;Is this safe? Is it a supplement?&rdquo;</li>
-      <li><strong style="color:var(--text)">&#x2713; Lifetime Chip</strong> (3rd Gen) or <strong style="color:var(--text)">&#x2713; 12-Month Chip</strong> (2nd Gen) &mdash; reinforces value right next to the price.</li>
-      <li><strong style="color:var(--text)">&#x2713; Secure Checkout</strong> &mdash; standard e-commerce signal, one second to add.</li>
-    </ul>
+    <table class="trust-table">
+      <thead>
+        <tr>
+          <th>Badge</th>
+          <th>Wix label to use</th>
+          <th>Why it matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:.55rem"><span class="badge-icon">&#x1F4B0;</span>14-Day Money-Back</div></td>
+          <td>&#x201C;14-Day Money-Back Guarantee&#x201D;</td>
+          <td>The strongest trust signal available right now. The policy already exists &mdash; it just needs to be visible at the point of purchase, not buried on the listing page.</td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:.55rem"><span class="badge-icon">&#x1F9EA;</span>Drug-Free &amp; Non-Invasive</div></td>
+          <td>&#x201C;Drug-Free &amp; Non-Invasive&#x201D;</td>
+          <td>Immediately answers the first concern of any new visitor: &ldquo;Is this safe? Is it a supplement?&rdquo; Especially important for competitive athletes worried about testing.</td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:.55rem"><span class="badge-icon">&#x267E;&#xFE0F;</span>Chip lifespan</div></td>
+          <td>&#x201C;Lifetime Chip&#x201D; <em style="font-weight:400">(3rd Gen)</em> or &#x201C;12-Month Chip&#x201D; <em style="font-weight:400">(2nd Gen)</em></td>
+          <td>Reinforces the value proposition right next to the price. Helps justify the cost and highlights the long-term benefit of upgrading from 2nd to 3rd Gen.</td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:.55rem"><span class="badge-icon">&#x1F512;</span>Secure Checkout</div></td>
+          <td>&#x201C;Secure Checkout&#x201D;</td>
+          <td>A standard e-commerce trust signal. Takes seconds to add and reduces last-moment hesitation at the payment step.</td>
+        </tr>
+      </tbody>
+    </table>
 
     <h3 class="sub">FAQ content for all product pages</h3>
     <div style="margin:.5rem 0 1.5rem">
@@ -494,9 +597,9 @@ footer strong{color:var(--green)}
     <div class="later-block">
       <div class="later-block-label">Month 1</div>
       <ul class="rec-list">
-        <li class="later-item">Install a review widget (Wix Reviews or Trustpilot) and email all existing customers for reviews &mdash; offer 10% off their next order as incentive</li>
-        <li class="later-item">Replace anonymous homepage testimonials with photos, full names, sport, and social handles</li>
-        <li class="later-item">Embed Instagram or TikTok athlete content directly on product pages</li>
+        <li class="later-item"><div class="rec-text-wrap">Install a review widget (Wix Reviews or Trustpilot) and email all existing customers for reviews &mdash; offer 10% off their next order as incentive</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Replace anonymous homepage testimonials with photos, full names, sport, and social handles</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Embed Instagram or TikTok athlete content directly on product pages</div></li>
       </ul>
     </div>
 
@@ -504,10 +607,10 @@ footer strong{color:var(--green)}
     <div class="later-block">
       <div class="later-block-label">Month 1</div>
       <ul class="rec-list">
-        <li class="later-item">Add a generation comparison table to the listing page (Tester vs 2nd Gen vs 3rd Gen: price, lifespan, best for)</li>
-        <li class="later-item">Replace the &ldquo;New&rdquo; badge on every product with meaningful labels: &lsquo;Most Popular&rsquo;, &lsquo;Best Seller&rsquo;, etc.</li>
-        <li class="later-item">Move out-of-stock products to the bottom of the listing with an &ldquo;email me when back&rdquo; option</li>
-        <li class="later-item">Add a short guided quiz to the listing page to reduce decision paralysis</li>
+        <li class="later-item"><div class="rec-text-wrap">Add a generation comparison table to the listing page (Tester vs 2nd Gen vs 3rd Gen: price, lifespan, best for)</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Replace the &ldquo;New&rdquo; badge on every product with meaningful labels: &lsquo;Most Popular&rsquo;, &lsquo;Best Seller&rsquo;, etc.</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Move out-of-stock products to the bottom of the listing with an &ldquo;email me when back&rdquo; option</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Add a short guided quiz to the listing page to reduce decision paralysis</div></li>
       </ul>
     </div>
 
@@ -515,10 +618,10 @@ footer strong{color:var(--green)}
     <div class="later-block">
       <div class="later-block-label">Months 1&ndash;2</div>
       <ul class="rec-list">
-        <li class="later-item">Set up abandoned cart email automation in Wix Automations &mdash; recovers 5&ndash;15% of abandoned carts</li>
-        <li class="later-item">Set up a post-purchase onboarding email: &ldquo;Welcome to NRG+ &mdash; here&rsquo;s how to get the most from your chip&rdquo;</li>
-        <li class="later-item">Set up a 14-day review request email triggered after each purchase</li>
-        <li class="later-item">Replace the newsletter CTA with a value-exchange offer: e.g. &ldquo;Get our free performance guide + 10% off&rdquo;</li>
+        <li class="later-item"><div class="rec-text-wrap">Set up abandoned cart email automation in Wix Automations &mdash; recovers 5&ndash;15% of abandoned carts</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Set up a post-purchase onboarding email: &ldquo;Welcome to NRG+ &mdash; here&rsquo;s how to get the most from your chip&rdquo;</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Set up a 14-day review request email triggered after each purchase</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Replace the newsletter CTA with a value-exchange offer: e.g. &ldquo;Get our free performance guide + 10% off&rdquo;</div></li>
       </ul>
     </div>
 
@@ -526,10 +629,10 @@ footer strong{color:var(--green)}
     <div class="later-block">
       <div class="later-block-label">Months 2&ndash;3</div>
       <ul class="rec-list">
-        <li class="later-item">Build sport-specific landing pages (Runners, Gym Athletes, Golfers, Cyclists) for paid ad campaigns</li>
-        <li class="later-item">Set up a Trustpilot profile &mdash; verified reviews display star ratings in Google search results</li>
-        <li class="later-item">Add cross-sell section on product pages: &ldquo;Customers also bought the Recovery Chip&rdquo;</li>
-        <li class="later-item">Add an order bump at checkout: e.g. &ldquo;Add the Recovery Chip for &pound;95 (save &pound;24)&rdquo;</li>
+        <li class="later-item"><div class="rec-text-wrap">Build sport-specific landing pages (Runners, Gym Athletes, Golfers, Cyclists) for paid ad campaigns</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Set up a Trustpilot profile &mdash; verified reviews display star ratings in Google search results</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Add cross-sell section on product pages: &ldquo;Customers also bought the Recovery Chip&rdquo;</div></li>
+        <li class="later-item"><div class="rec-text-wrap">Add an order bump at checkout: e.g. &ldquo;Add the Recovery Chip for &pound;95 (save &pound;24)&rdquo;</div></li>
       </ul>
     </div>
   </div>
@@ -543,9 +646,40 @@ footer strong{color:var(--green)}
 </footer>
 
 <script>
-window.addEventListener('scroll',()=>{const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;document.getElementById('progress').style.width=p+'%'});
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress').style.width=p+'%';
+});
+
+// Fade in on scroll
 const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')}),{threshold:.07});
 document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// Theme toggle
+function toggleTheme(){
+  const html=document.documentElement;
+  const isLight=html.getAttribute('data-theme')==='light';
+  html.setAttribute('data-theme',isLight?'dark':'light');
+  const icon=document.getElementById('themeIcon');
+  const label=document.getElementById('themeLabel');
+  if(isLight){
+    // switching to dark — show sun icon
+    icon.innerHTML='<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    label.textContent='Light';
+  } else {
+    // switching to light — show moon icon
+    icon.innerHTML='<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
+    label.textContent='Dark';
+  }
+}
+
+// PDF export using browser print
+function exportPDF(){
+  // Brief delay to let browser settle, then trigger print
+  window.scrollTo(0,0);
+  setTimeout(()=>window.print(),150);
+}
 </script>
 </body>
 </html>
