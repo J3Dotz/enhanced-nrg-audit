@@ -6,6 +6,8 @@
 <title>Enhanced NRG+ — Pre-Launch Audit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --bg:#080c0a;--surface:#0f1712;--surface2:#1a2420;
@@ -664,21 +666,123 @@ function toggleTheme(){
   const icon=document.getElementById('themeIcon');
   const label=document.getElementById('themeLabel');
   if(isLight){
-    // switching to dark — show sun icon
     icon.innerHTML='<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-    label.textContent='Light';
+    label.textContent='Light mode';
   } else {
-    // switching to light — show moon icon
     icon.innerHTML='<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
-    label.textContent='Dark';
+    label.textContent='Dark mode';
   }
 }
 
-// PDF export using browser print
-function exportPDF(){
-  // Brief delay to let browser settle, then trigger print
+// PDF export — full-page render via html2canvas + jsPDF
+async function exportPDF(){
+  const btn = document.querySelector('.btn-pdf');
+  const originalHTML = btn.innerHTML;
+
+  // 1. Show loading state on button
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span>Generating…</span>';
+  btn.disabled = true;
+
+  // Add spinner keyframes if not already present
+  if(!document.getElementById('spin-style')){
+    const s=document.createElement('style');
+    s.id='spin-style';
+    s.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  // 2. Prepare the page: reveal all hidden sections, hide fixed UI
+  const fadeEls = document.querySelectorAll('.fade-in:not(.visible)');
+  fadeEls.forEach(el => el.classList.add('visible'));
+
+  const nav = document.querySelector('nav');
+  const progressBar = document.getElementById('progress');
+  const navDisplay = nav.style.display;
+  const pbDisplay = progressBar.style.display;
+  nav.style.display = 'none';
+  progressBar.style.display = 'none';
+  document.body.style.paddingTop = '0';
+
+  // 3. Scroll to top so html2canvas captures from the beginning
   window.scrollTo(0,0);
-  setTimeout(()=>window.print(),150);
+  await new Promise(r => setTimeout(r, 300));
+
+  try {
+    const { jsPDF } = window.jspdf;
+
+    // 4. Capture the full page as a canvas
+    const canvas = await html2canvas(document.body, {
+      scale: 2,                  // 2x for retina-quality text
+      useCORS: true,
+      allowTaint: false,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: document.body.scrollWidth,
+      windowHeight: document.body.scrollHeight,
+      backgroundColor: getComputedStyle(document.documentElement)
+                          .getPropertyValue('--bg').trim() || '#080c0a',
+      logging: false,
+      onclone: (doc) => {
+        // Make sure all sections are visible in the clone
+        doc.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+        doc.querySelector('nav').style.display = 'none';
+        doc.getElementById('progress').style.display = 'none';
+        doc.body.style.paddingTop = '0';
+      }
+    });
+
+    // 5. Build the PDF — A4 portrait, one continuous image split across pages
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = pdf.internal.pageSize.getWidth();   // 210mm
+    const pageH = pdf.internal.pageSize.getHeight();  // 297mm
+
+    const imgW = pageW;
+    const imgH = (canvas.height * pageW) / canvas.width;  // proportional height in mm
+
+    let yOffset = 0;
+    let pagesAdded = 0;
+
+    while (yOffset < imgH) {
+      if (pagesAdded > 0) pdf.addPage();
+
+      // sourceY in canvas pixels corresponding to yOffset mm
+      const sourceY = (yOffset / imgH) * canvas.height;
+      const sliceHeightPx = (pageH / imgH) * canvas.height;
+
+      // Draw full-width slice of the image onto this page
+      pdf.addImage(
+        imgData,
+        'JPEG',
+        0,                // x
+        -yOffset,         // y (negative offset scrolls through the image)
+        imgW,             // width
+        imgH,             // full image height (clipped by page)
+        undefined,
+        'FAST'
+      );
+
+      yOffset += pageH;
+      pagesAdded++;
+
+      // Safety cap — shouldn't need more than 30 pages
+      if (pagesAdded > 30) break;
+    }
+
+    pdf.save('EnhancedNRG-PreLaunch-Audit.pdf');
+
+  } catch(err) {
+    console.error('PDF generation failed:', err);
+    alert('PDF generation failed. Try switching to light mode first, or use File → Print → Save as PDF in your browser.');
+  } finally {
+    // 6. Restore the page to its normal state
+    nav.style.display = navDisplay || '';
+    progressBar.style.display = pbDisplay || '';
+    document.body.style.paddingTop = '88px';
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
