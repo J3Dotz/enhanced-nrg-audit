@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced NRG+ — Pre-Launch Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c0a;--surface:#0f1712;--surface2:#141f18;--green:#22c55e;--green-glow:rgba(34,197,94,0.10);--green-border:rgba(34,197,94,0.22);--text:#e8f0eb;--muted:#7a9485;--red-bg:rgba(239,68,68,0.08);--amber-bg:rgba(245,158,11,0.08);--win-bg:rgba(34,197,94,0.08);--border:rgba(255,255,255,0.06);--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,10,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px}
+.nav-brand{font-family:var(--font-head);font-weight:800;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.nav-links{display:flex;gap:.2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:500;padding:.3rem .65rem;border-radius:4px;transition:color .2s,background .2s}
+.nav-links a:hover{color:var(--text);background:var(--border)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 4rem 5rem;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(34,197,94,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 100%,black 30%,transparent 100%)}
+.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(34,197,94,.07) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+.hero-label::before{content:'';display:block;width:32px;height:1px;background:var(--green)}
+.hero h1{font-family:var(--font-head);font-size:clamp(3rem,7vw,6rem);font-weight:800;line-height:.95;letter-spacing:-.03em;margin-bottom:1.25rem}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero-sub{font-size:1rem;color:var(--muted);font-weight:300;max-width:520px;margin-bottom:2.5rem;line-height:1.65}
+.context-bar{display:flex;gap:2rem;flex-wrap:wrap}
+.context-item{display:flex;flex-direction:column;gap:.2rem}
+.context-key{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.context-val{font-family:var(--font-head);font-size:.95rem;font-weight:700;color:var(--text)}
+.context-val.green{color:var(--green)}
+.wrapper{max-width:900px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+section{padding:5.5rem 0;border-top:1px solid var(--border);position:relative;z-index:1}
+.section-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.section-eyebrow .num{font-family:var(--font-head);font-size:.62rem;border:1px solid var(--green-border);border-radius:3px;padding:.1rem .4rem;color:var(--green)}
+h2.section-title{font-family:var(--font-head);font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.6rem}
+.section-desc{color:var(--muted);font-size:.95rem;max-width:580px;margin-bottom:2.5rem;font-weight:300;line-height:1.65}
+h3.sub{font-family:var(--font-head);font-size:1rem;font-weight:700;margin:2.25rem 0 .85rem;color:var(--text);letter-spacing:-.01em}
+p{color:var(--muted);margin-bottom:.9rem;font-size:.92rem;line-height:1.75}
+.launch-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .65rem;border-radius:3px;margin-bottom:1.5rem}
+.launch-badge.now{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid var(--green-border)}
+.launch-badge.later{background:rgba(100,100,130,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.2)}
+.callout{border-radius:7px;padding:1rem 1.2rem;margin:.85rem 0;display:flex;gap:1rem;align-items:flex-start;border:1px solid}
+.callout-icon{font-size:1rem;line-height:1.7;flex-shrink:0}
+.callout-label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
+.callout-body{font-size:.88rem;line-height:1.65}
+.callout.critical{background:var(--red-bg);border-color:rgba(239,68,68,.22)}
+.callout.critical .callout-label{color:#f87171}
+.callout.critical .callout-body{color:#fca5a5}
+.callout.warning{background:var(--amber-bg);border-color:rgba(245,158,11,.22)}
+.callout.warning .callout-label{color:#fbbf24}
+.callout.warning .callout-body{color:#fde68a}
+.callout.win{background:var(--win-bg);border-color:var(--green-border)}
+.callout.win .callout-label{color:var(--green)}
+.callout.win .callout-body{color:#86efac}
+.rec-list{list-style:none;margin:.6rem 0 1.5rem;display:flex;flex-direction:column;gap:.45rem}
+.rec-list li{display:flex;gap:.7rem;align-items:flex-start;font-size:.88rem;color:var(--muted);line-height:1.6}
+.rec-list li::before{content:'→';color:var(--green);flex-shrink:0;font-weight:700;margin-top:.05rem}
+.rec-list li.later-item::before{color:#64748b}
+.rec-list li.later-item{color:#64748b}
+.data-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.84rem}
+.data-table th{text-align:left;padding:.6rem .8rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border)}
+.data-table td{padding:.7rem .8rem;vertical-align:top;border-bottom:1px solid var(--border);color:var(--muted);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--surface2)}
+.data-table .td-issue{color:var(--text);font-size:.86rem}
+.data-table .td-rec{color:var(--muted);font-size:.83rem}
+.fw-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.83rem}
+.fw-table th{padding:.6rem .9rem;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:left}
+.fw-table td{padding:.8rem .9rem;vertical-align:top;border-bottom:1px solid var(--border);color:var(--muted);line-height:1.55}
+.fw-table td:first-child{color:var(--green);font-weight:600;font-size:.78rem;white-space:nowrap}
+.fw-table tr:last-child td{border-bottom:none}
+.fw-table tr:hover td{background:var(--surface2)}
+.tag{display:inline-flex;align-items:center;gap:.2rem;font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.18rem .48rem;border-radius:3px;white-space:nowrap}
+.tag.p1{background:rgba(239,68,68,.14);color:#f87171}
+.tag.p2{background:rgba(245,158,11,.14);color:#fbbf24}
+.tag.missing{background:rgba(239,68,68,.12);color:#f87171}
+.tag.weak{background:rgba(245,158,11,.12);color:#fbbf24}
+.tag.present{background:rgba(34,197,94,.12);color:#4ade80}
+.checklist-section{margin:1.5rem 0}
+.checklist-group-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:700;margin:1.5rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid var(--green-border)}
+.checklist-group-label.later-label{color:#64748b;border-color:rgba(100,116,139,.2)}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.check-item{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:.82rem;color:var(--muted);line-height:1.4;transition:border-color .2s,background .2s;cursor:pointer}
+.check-item:hover{border-color:var(--green-border);background:var(--surface2)}
+.check-item.checked{border-color:var(--green-border);background:var(--green-glow)}
+.check-item.checked .check-box{background:var(--green);border-color:var(--green)}
+.check-item.checked .check-box::after{content:'✓';color:var(--bg);font-size:.6rem;font-weight:900}
+.check-item.checked .check-label{color:var(--text)}
+.check-box{width:15px;height:15px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:.1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.faq-item{border-bottom:1px solid var(--border);padding:.9rem 0}
+.faq-q{font-size:.88rem;font-weight:500;color:var(--text);margin-bottom:.35rem;padding-left:1.2rem;position:relative}
+.faq-q::before{content:'Q';position:absolute;left:0;font-size:.65rem;color:var(--green);font-weight:800;top:.1rem}
+.faq-a{font-size:.85rem;color:var(--muted);padding-left:1.2rem;line-height:1.6;margin:0}
+.mockup-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.mockup-bar{background:var(--surface2);padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
+.mockup-dot{width:8px;height:8px;border-radius:50%}
+.mockup-dot.r{background:#ef4444}
+.mockup-dot.a{background:#f59e0b}
+.mockup-dot.g{background:#22c55e}
+.mockup-url{margin-left:.5rem;font-size:.72rem;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;padding:.2rem .6rem;flex:1;max-width:340px}
+.mockup-label{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.5rem 1rem}
+.mockup-body{padding:1rem 1.5rem 1.5rem}
+.mw-nav{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);margin-bottom:.75rem}
+.mw-logo{font-family:var(--font-head);font-size:.75rem;font-weight:800;color:var(--green);letter-spacing:.1em}
+.mw-navitems{display:flex;gap:.5rem}
+.mw-navitem{font-size:.65rem;color:var(--muted);padding:.2rem .4rem;border-radius:3px;background:var(--border)}
+.mw-navitem.has-dropdown{display:flex;align-items:center;gap:.25rem}
+.mw-navitem.has-dropdown::after{content:'▾';font-size:.5rem;color:var(--green)}
+.mw-navitem.highlight{background:var(--green-glow);border:1px solid var(--green-border);color:var(--green)}
+.mw-hero{background:linear-gradient(160deg,rgba(34,197,94,.04) 0%,transparent 60%);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin-bottom:.75rem;text-align:center}
+.mw-hero-tag{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:.4rem}
+.mw-hero-h1{font-family:var(--font-head);font-size:1.2rem;font-weight:800;margin-bottom:.3rem}
+.mw-hero-sub{font-size:.65rem;color:var(--muted);max-width:260px;margin:0 auto .75rem;line-height:1.5}
+.mw-cta-row{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.mw-btn{font-size:.65rem;font-weight:700;padding:.35rem .8rem;border-radius:4px}
+.mw-btn.primary{background:var(--green);color:var(--bg)}
+.mw-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.mw-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.75rem}
+.mw-cat{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:.6rem .4rem;text-align:center}
+.mw-cat-icon{font-size:1rem;margin-bottom:.2rem}
+.mw-cat-label{font-size:.6rem;color:var(--muted);font-weight:500}
+.mw-cat-cta{font-size:.55rem;color:var(--green);margin-top:.2rem}
+.mw-trust{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.mw-trust-item{font-size:.6rem;color:var(--muted);display:flex;align-items:center;gap:.25rem}
+.mw-trust-item span{color:var(--green)}
+.mw-annotation{display:flex;align-items:flex-start;gap:.5rem;margin:.5rem 0;padding:.5rem .75rem;background:rgba(34,197,94,.06);border-left:2px solid var(--green);border-radius:0 4px 4px 0}
+.mw-annotation-icon{color:var(--green);font-size:.75rem;flex-shrink:0;margin-top:.05rem}
+.mw-annotation-text{font-size:.72rem;color:#86efac;line-height:1.45}
+.mw-dropdown-demo{position:relative;display:inline-block;margin:1rem 0}
+.mw-dropdown-trigger{background:var(--surface2);border:1px solid var(--green-border);border-radius:5px;padding:.5rem 1rem;font-size:.8rem;color:var(--text);display:flex;align-items:center;gap:.4rem;cursor:default}
+.mw-dropdown-trigger::after{content:'▾';color:var(--green);font-size:.6rem}
+.mw-dropdown-menu{position:absolute;top:calc(100% + 4px);left:0;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.4rem;min-width:210px;z-index:10;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.mw-dd-item{display:flex;align-items:center;gap:.6rem;padding:.45rem .65rem;border-radius:4px;font-size:.78rem;color:var(--muted)}
+.mw-dd-item:hover{background:var(--green-glow);color:var(--text)}
+.mw-dd-icon{font-size:.85rem}
+.mw-pdp{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.mw-pdp-img{background:var(--surface2);border:1px solid var(--border);border-radius:6px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem}
+.mw-pdp-img-label{font-size:.6rem;color:var(--muted);text-align:center}
+.mw-pdp-right{display:flex;flex-direction:column;gap:.5rem}
+.mw-pdp-title{font-family:var(--font-head);font-size:.95rem;font-weight:800}
+.mw-pdp-price{font-size:1.1rem;font-weight:700;color:var(--green)}
+.mw-pdp-hook{font-size:.7rem;color:var(--muted);font-style:italic;line-height:1.5}
+.mw-pdp-trust{display:flex;flex-wrap:wrap;gap:.3rem}
+.mw-trust-badge{font-size:.58rem;background:var(--green-glow);border:1px solid var(--green-border);color:#86efac;border-radius:3px;padding:.15rem .4rem;display:flex;align-items:center;gap:.2rem}
+.mw-pdp-btn{background:var(--green);color:var(--bg);font-size:.72rem;font-weight:800;padding:.55rem 1rem;border-radius:5px;text-align:center;letter-spacing:.04em}
+.mw-pdp-faq{font-size:.65rem;color:var(--muted);border-top:1px solid var(--border);padding-top:.5rem}
+.mw-pdp-faq-q{color:var(--text);margin-bottom:.15rem;font-weight:500}
+.mw-pdp-faq-a{color:var(--muted);margin-bottom:.4rem}
+.later-block{background:rgba(30,35,50,.5);border:1px solid rgba(100,116,139,.15);border-radius:8px;padding:1.5rem;margin-top:2.5rem}
+.later-block-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.later-block-label::before{content:'';display:block;width:20px;height:1px;background:#64748b}
+.progress-bar{position:fixed;top:58px;left:0;height:2px;background:var(--green);z-index:99;transition:width .1s;box-shadow:0 0 8px rgba(34,197,94,.4)}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+footer{border-top:1px solid var(--border);padding:2.5rem 0;text-align:center;color:var(--muted);font-size:.8rem;position:relative;z-index:1}
+footer strong{color:var(--green)}
+@media(max-width:768px){.hero{padding:0 1.5rem 4rem}.wrapper{padding:0 1.25rem}nav{padding:0 1.25rem}.nav-links{display:none}section{padding:4rem 0}.checklist{grid-template-columns:1fr}.mw-pdp{grid-template-columns:1fr}.mw-cats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progress"></div>
+<nav>
+  <div class="nav-brand">NRG+ &middot; Pre-Launch Audit</div>
+  <ul class="nav-links">
+    <li><a href="#scope">Scope</a></li>
+    <li><a href="#homepage">Homepage</a></li>
+    <li><a href="#nav-section">Navigation</a></li>
+    <li><a href="#pdp">Product Pages</a></li>
+    <li><a href="#checklist">Checklist</a></li>
+    <li><a href="#later">Post-Launch</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="wrapper">
+    <div class="hero-label">Pre-Launch Audit &middot; May 2026</div>
+    <h1>Enhanced<br><em>NRG+</em></h1>
+    <p class="hero-sub">A focused pre-launch review of enhancednrg.com &mdash; covering only what matters in the next 1&ndash;2 weeks. Everything else is parked for post-launch.</p>
+    <div class="context-bar">
+      <div class="context-item"><div class="context-key">Launch window</div><div class="context-val green">1&ndash;2 weeks</div></div>
+      <div class="context-item"><div class="context-key">Focus</div><div class="context-val">Sales funnel only</div></div>
+      <div class="context-item"><div class="context-key">Sections</div><div class="context-val">Homepage &middot; Nav &middot; Product Pages</div></div>
+      <div class="context-item"><div class="context-key">Platform</div><div class="context-val">Wix (no dev needed)</div></div>
+    </div>
+  </div>
+</div>
+
+<section id="scope">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">00</span> Scope &amp; approach</div>
+    <h2 class="section-title">What we&rsquo;re fixing before launch</h2>
+    <p class="section-desc">With a 1&ndash;2 week window, every change needs to be high-impact and fast to implement. This audit focuses on three areas of the sales funnel only.</p>
+    <table class="data-table">
+      <thead><tr><th style="width:30%">Area</th><th style="width:33%">Core problem</th><th>Pre-launch fix</th></tr></thead>
+      <tbody>
+        <tr><td class="td-issue">Homepage</td><td class="td-rec">Brand-focused, not product-focused. No clear path to purchase above the fold.</td><td class="td-rec">Make it product-led with category shortcuts and a clear CTA</td></tr>
+        <tr><td class="td-issue">Navigation</td><td class="td-rec">Products link goes to a flat listing of 42 items. No way to navigate by pillar.</td><td class="td-rec">Add a dropdown to the Products nav with the 4 product pillars</td></tr>
+        <tr><td class="td-issue">Product detail pages</td><td class="td-rec">No trust signals at the point of purchase. Long educational copy with no outcome hook.</td><td class="td-rec">Add money-back badge, trust strip, and FAQ to every product page</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1rem">Everything else &mdash; reviews, email automation, quiz funnels, blog content &mdash; is flagged as <strong style="color:#94a3b8">post-launch</strong> and listed at the end of this document.</p>
+  </div>
+</section>
+
+<section id="homepage">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">01</span> Homepage</div>
+    <h2 class="section-title">Make the homepage product-led</h2>
+    <p class="section-desc">The homepage opens with brand mission. That&rsquo;s fine &mdash; but a visitor who wants to buy has no obvious next step above the fold.</p>
+    <div class="launch-badge now">&#x26A1; Pre-launch priority</div>
+
+    <h3 class="sub">The two problems</h3>
+    <div class="callout critical">
+      <div class="callout-icon">&#x1F534;</div>
+      <div><div class="callout-label">No CTA above the fold</div>
+      <div class="callout-body">The hero video works well as brand-building, but there is no button, no link, and no prompt to shop until the user scrolls past the full-screen video. For any visitor arriving from an ad or social post, this is the first drop-off point.</div></div>
+    </div>
+    <div class="callout warning">
+      <div class="callout-icon">&#x26A0;&#xFE0F;</div>
+      <div><div class="callout-label">Category shortcuts exist &mdash; but are buried mid-page</div>
+      <div class="callout-body">Sports Performance, Health &amp; Lifestyle, Pain Relief, and Recovery are already on the homepage &mdash; they just appear too far down. These are the 4 pillars customers should see immediately after the hero.</div></div>
+    </div>
+
+    <h3 class="sub">What to change</h3>
+    <ul class="rec-list">
+      <li>Add a <strong style="color:var(--text)">primary CTA button</strong> in the hero section &mdash; e.g. <em>&ldquo;Shop All Products&rdquo;</em> or <em>&ldquo;Find Your Chip&rdquo;</em>. Sits below the existing tagline, no redesign needed.</li>
+      <li>Add a <strong style="color:var(--text)">plain-English one-liner</strong> beneath the headline: e.g. <em>&ldquo;Wearable bio-signalling chips for performance, recovery and wellbeing.&rdquo;</em></li>
+      <li>Move the <strong style="color:var(--text)">4 category blocks</strong> (Sports, Lifestyle, Pain Relief, Recovery) higher &mdash; the first thing visible after the hero, each linking directly to its category page.</li>
+      <li>Add a <strong style="color:var(--text)">trust strip</strong> beneath the category blocks: <em>&ldquo;Drug-Free &middot; Non-Invasive &middot; 14-Day Money-Back &middot; UK Company&rdquo;</em> &mdash; one line, no design effort needed.</li>
+    </ul>
+
+    <h3 class="sub">Suggested homepage structure</h3>
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="mockup-dot r"></div><div class="mockup-dot a"></div><div class="mockup-dot g"></div>
+        <div class="mockup-url">enhancednrg.com</div>
+      </div>
+      <div class="mockup-label">Suggested layout &mdash; pre-launch additions annotated</div>
+      <div class="mockup-body">
+        <div class="mw-nav">
+          <div class="mw-logo">ENHANCED NRG+</div>
+          <div class="mw-navitems">
+            <div class="mw-navitem">Home</div>
+            <div class="mw-navitem has-dropdown highlight">Products</div>
+            <div class="mw-navitem">Company</div>
+            <div class="mw-navitem">Info Hub</div>
+          </div>
+        </div>
+        <div class="mw-hero">
+          <div class="mw-hero-tag">Bio-signalling performance technology</div>
+          <div class="mw-hero-h1">Enhance Your Life</div>
+          <div class="mw-hero-sub">Wearable frequency chips for performance, recovery and wellbeing. Drug-free. Non-invasive.</div>
+          <div class="mw-cta-row">
+            <div class="mw-btn primary">Shop All Products &rarr;</div>
+            <div class="mw-btn secondary">Learn how it works</div>
+          </div>
+        </div>
+        <div class="mw-annotation">
+          <div class="mw-annotation-icon">&#x2191;</div>
+          <div class="mw-annotation-text"><strong>New:</strong> Add a &ldquo;Shop All Products&rdquo; button and plain-English sub-headline directly in the hero &mdash; no redesign needed, just two additions to the existing section.</div>
+        </div>
+        <div class="mw-cats">
+          <div class="mw-cat"><div class="mw-cat-icon">&#x1F3C3;</div><div class="mw-cat-label">Sports Performance</div><div class="mw-cat-cta">Shop &rarr;</div></div>
+          <div class="mw-cat"><div class="mw-cat-icon">&#x1F33F;</div><div class="mw-cat-label">Health &amp; Lifestyle</div><div class="mw-cat-cta">Shop &rarr;</div></div>
+          <div class="mw-cat"><div class="mw-cat-icon">&#x1F4A6;</div><div class="mw-cat-label">Pain Relief</div><div class="mw-cat-cta">Shop &rarr;</div></div>
+          <div class="mw-cat"><div class="mw-cat-icon">&#x26A1;</div><div class="mw-cat-label">Recovery</div><div class="mw-cat-cta">Shop &rarr;</div></div>
+        </div>
+        <div class="mw-annotation">
+          <div class="mw-annotation-icon">&#x2191;</div>
+          <div class="mw-annotation-text"><strong>Move higher:</strong> These 4 category blocks already exist &mdash; just reorder them to appear immediately after the hero, before any other content sections.</div>
+        </div>
+        <div class="mw-trust" style="padding:.75rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:.5rem 0">
+          <div class="mw-trust-item"><span>&#x2713;</span> Drug-Free</div>
+          <div class="mw-trust-item"><span>&#x2713;</span> Non-Invasive</div>
+          <div class="mw-trust-item"><span>&#x2713;</span> 14-Day Money-Back</div>
+          <div class="mw-trust-item"><span>&#x2713;</span> UK Company</div>
+        </div>
+        <div class="mw-annotation">
+          <div class="mw-annotation-icon">&#x2191;</div>
+          <div class="mw-annotation-text"><strong>New:</strong> A one-line trust strip below the categories. Text only &mdash; no design effort required. This answers the first visitor objection before they reach the product listing.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">What to leave alone for launch</h3>
+    <ul class="rec-list">
+      <li class="later-item">The hero video &mdash; it works well for the brand. No changes needed.</li>
+      <li class="later-item">The sector carousel, mission statement, and testimonial section &mdash; can stay as-is and be refined post-launch.</li>
+      <li class="later-item">The newsletter section &mdash; leave it for now. A lead magnet strategy is a post-launch project.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="nav-section">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">02</span> Navigation</div>
+    <h2 class="section-title">Add a Products dropdown</h2>
+    <p class="section-desc">Right now &ldquo;Products&rdquo; goes straight to a flat list of 42 items. A dropdown with the 4 pillars lets customers navigate directly to what&rsquo;s relevant to them.</p>
+    <div class="launch-badge now">&#x26A1; Pre-launch priority</div>
+
+    <div class="callout critical">
+      <div class="callout-icon">&#x1F534;</div>
+      <div><div class="callout-label">Missing navigation shortcut</div>
+      <div class="callout-body">A customer interested in pain relief has to land on the full 42-product listing and filter manually. A simple dropdown removes this friction entirely. Wix supports dropdown menus natively in the menu editor &mdash; no code required.</div></div>
+    </div>
+
+    <h3 class="sub">Recommended dropdown structure</h3>
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="mockup-dot r"></div><div class="mockup-dot a"></div><div class="mockup-dot g"></div>
+        <div class="mockup-url">enhancednrg.com</div>
+      </div>
+      <div class="mockup-label">Products nav item with dropdown &mdash; hover state</div>
+      <div class="mockup-body" style="padding-top:1.5rem;padding-bottom:3rem">
+        <div class="mw-dropdown-demo">
+          <div class="mw-dropdown-trigger">Products</div>
+          <div class="mw-dropdown-menu">
+            <div class="mw-dd-item"><div class="mw-dd-icon">&#x1F3C3;</div><div><div style="font-weight:600;color:var(--text);font-size:.8rem">Sports Performance</div><div style="font-size:.68rem;color:var(--muted)">Endurance, speed, strength, tennis, golf&hellip;</div></div></div>
+            <div class="mw-dd-item"><div class="mw-dd-icon">&#x1F33F;</div><div><div style="font-weight:600;color:var(--text);font-size:.8rem">Health &amp; Lifestyle</div><div style="font-size:.68rem;color:var(--muted)">Sleep, balance, everyday wellbeing&hellip;</div></div></div>
+            <div class="mw-dd-item"><div class="mw-dd-icon">&#x1F4A6;</div><div><div style="font-weight:600;color:var(--text);font-size:.8rem">Pain Relief &amp; Recovery</div><div style="font-size:.68rem;color:var(--muted)">Targeted relief and recovery support&hellip;</div></div></div>
+            <div style="border-top:1px solid var(--border);margin-top:.3rem;padding-top:.3rem">
+              <div class="mw-dd-item" style="color:var(--muted)"><div class="mw-dd-icon">&#x2261;</div><div style="font-size:.75rem">View All Products</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:2.5rem">
+          <div class="mw-annotation">
+            <div class="mw-annotation-icon">&#x2191;</div>
+            <div class="mw-annotation-text">Each item links to an existing category URL (/category/sports-enhancement, /category/lifestyle-improvement, /category/pain-relief-recovery). &ldquo;View All&rdquo; at the bottom keeps the full listing accessible. Set up in Wix Menu Manager &mdash; no code needed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">How to set this up in Wix</h3>
+    <ul class="rec-list">
+      <li>Go to <strong style="color:var(--text)">Site &amp; App &rarr; Site Pages &amp; Menu &rarr; Main Menu</strong></li>
+      <li>Click the <strong style="color:var(--text)">&ldquo;Products&rdquo;</strong> menu item &rarr; select <em>&ldquo;Add Sub-item&rdquo;</em></li>
+      <li>Add the category pages as sub-items, plus &ldquo;All Products&rdquo; at the bottom</li>
+      <li>The dropdown appears automatically on hover &mdash; no CSS or code required</li>
+    </ul>
+    <div class="callout win">
+      <div class="callout-icon">&#x2705;</div>
+      <div><div class="callout-label">Quick win &mdash; under 15 minutes to implement</div>
+      <div class="callout-body">The category pages already exist and have URLs. Adding the dropdown is purely a Wix menu editor task &mdash; no design work, no code, no images needed.</div></div>
+    </div>
+
+    <h3 class="sub">One additional navigation note</h3>
+    <div class="callout warning">
+      <div class="callout-icon">&#x26A0;&#xFE0F;</div>
+      <div><div class="callout-label">&ldquo;The Movement&rdquo; in the main nav</div>
+      <div class="callout-body">This page is a deep-dive science explainer with no call to action &mdash; valuable content, but it&rsquo;s not a sales page. Consider moving it under &ldquo;Company&rdquo; as a sub-item, or at minimum adding a &ldquo;Shop the technology &rarr;&rdquo; CTA button at the top of the page. A 5-minute change.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pdp">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">03</span> Product Pages</div>
+    <h2 class="section-title">Build trust at the point of purchase</h2>
+    <p class="section-desc">The product pages are where the decision is made. Right now they&rsquo;re missing the two things every buyer needs: a reason to trust, and answers to their obvious questions.</p>
+    <div class="launch-badge now">&#x26A1; Pre-launch priority</div>
+
+    <h3 class="sub">Current issues</h3>
+    <div class="callout critical">
+      <div class="callout-icon">&#x1F534;</div>
+      <div><div class="callout-label">No trust signals near the buy button</div>
+      <div class="callout-body">The Add to Cart button sits alone with no supporting context. The 14-day money-back guarantee exists &mdash; but only in a small text block at the top of the listing page. A buyer on the product page never sees it. This needs to be right at the moment of decision.</div></div>
+    </div>
+    <div class="callout critical">
+      <div class="callout-icon">&#x1F534;</div>
+      <div><div class="callout-label">No FAQ section &mdash; unanswered questions = abandoned carts</div>
+      <div class="callout-body">For a novel product like NRG+, customers will have questions: How do I wear it? Is it legal in sport? How long does it last? What if it doesn&rsquo;t work? If those questions aren&rsquo;t on the page, the customer either emails (friction) or leaves (lost sale).</div></div>
+    </div>
+    <div class="callout warning">
+      <div class="callout-icon">&#x26A0;&#xFE0F;</div>
+      <div><div class="callout-label">Copy leads with biology, not benefits</div>
+      <div class="callout-body">The descriptions explain aerobic metabolism and Type I muscle fibres &mdash; useful science, but not what a buyer needs first. Lead with the outcome in plain English, then support with science below. A small reorder, not a full rewrite.</div></div>
+    </div>
+
+    <h3 class="sub">What to add to every product page</h3>
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="mockup-dot r"></div><div class="mockup-dot a"></div><div class="mockup-dot g"></div>
+        <div class="mockup-url">enhancednrg.com/product-page/endurance-chip-3rd-gen</div>
+      </div>
+      <div class="mockup-label">Product detail page &mdash; suggested additions annotated</div>
+      <div class="mockup-body">
+        <div class="mw-pdp">
+          <div class="mw-pdp-img"><div style="font-size:2rem">&#x1F4E6;</div><div class="mw-pdp-img-label">Product image<br>(existing)</div></div>
+          <div class="mw-pdp-right">
+            <div class="mw-pdp-title">Endurance Chip &mdash; 3rd Gen</div>
+            <div class="mw-pdp-price">&pound;147.00</div>
+            <div class="mw-pdp-hook">&ldquo;Run further. Fatigue later. Recover faster.&rdquo;<br>A wearable frequency chip that supports your body&rsquo;s natural endurance signalling.</div>
+            <div class="mw-pdp-trust">
+              <div class="mw-trust-badge">&#x2713; 14-Day Money-Back</div>
+              <div class="mw-trust-badge">&#x2713; Drug-Free</div>
+              <div class="mw-trust-badge">&#x2713; Non-Invasive</div>
+              <div class="mw-trust-badge">&#x2713; Lifetime Chip</div>
+            </div>
+            <div class="mw-pdp-btn">Add to Cart</div>
+            <div class="mw-pdp-faq">
+              <div class="mw-pdp-faq-q">&#x25B8; How do I wear it?</div>
+              <div class="mw-pdp-faq-a">Wear directly on skin or inside your kit. Adhesive strips included.</div>
+              <div class="mw-pdp-faq-q">&#x25B8; Is it legal in competition?</div>
+              <div class="mw-pdp-faq-a">Yes &mdash; no substances, no declaration needed. Fully drug-free.</div>
+              <div class="mw-pdp-faq-q">&#x25B8; What if it doesn&rsquo;t work for me?</div>
+              <div class="mw-pdp-faq-a">14-day money-back guarantee. Email Sales@EnhancedNRG.com.</div>
+            </div>
+          </div>
+        </div>
+        <div class="mw-annotation" style="margin-top:1rem">
+          <div class="mw-annotation-icon">&#x2191;</div>
+          <div class="mw-annotation-text"><strong>New additions:</strong> (1) Short benefit hook above the description, (2) Trust badge strip below the price, (3) FAQ section below Add to Cart. The existing long-form science description stays &mdash; just moves below these elements.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">Trust badges &mdash; what to include on each page</h3>
+    <ul class="rec-list">
+      <li><strong style="color:var(--text)">&#x2713; 14-Day Money-Back Guarantee</strong> &mdash; the strongest trust signal available right now. It&rsquo;s already the policy; just make it visible at the point of purchase.</li>
+      <li><strong style="color:var(--text)">&#x2713; Drug-Free &amp; Non-Invasive</strong> &mdash; answers the immediate concern of any new visitor: &ldquo;Is this safe? Is it a supplement?&rdquo;</li>
+      <li><strong style="color:var(--text)">&#x2713; Lifetime Chip</strong> (3rd Gen) or <strong style="color:var(--text)">&#x2713; 12-Month Chip</strong> (2nd Gen) &mdash; reinforces value right next to the price.</li>
+      <li><strong style="color:var(--text)">&#x2713; Secure Checkout</strong> &mdash; standard e-commerce signal, one second to add.</li>
+    </ul>
+
+    <h3 class="sub">FAQ content for all product pages</h3>
+    <div style="margin:.5rem 0 1.5rem">
+      <div class="faq-item"><div class="faq-q">How do I wear the chip?</div><div class="faq-a">Place it directly on the skin or inside your clothing or kit, close to the body. Adhesive strips are included with every chip.</div></div>
+      <div class="faq-item"><div class="faq-q">Is it legal for competitive sport?</div><div class="faq-a">Yes. NRG+ chips contain no substances &mdash; they are passive, non-invasive wearable technology. Nothing to declare, nothing to test for.</div></div>
+      <div class="faq-item"><div class="faq-q">How quickly will I notice a difference?</div><div class="faq-a">Most users notice changes within the first 1&ndash;3 sessions. Results vary by individual &mdash; which is why we back every purchase with a 14-day money-back guarantee.</div></div>
+      <div class="faq-item"><div class="faq-q">Can I wear it in water?</div><div class="faq-a">The chip is water-resistant. Avoid prolonged submersion.</div></div>
+      <div class="faq-item"><div class="faq-q">What&rsquo;s the difference between 2nd Gen and 3rd Gen?</div><div class="faq-a">The 2nd Gen chip lasts 12 months (&pound;119). The 3rd Gen is designed to last a lifetime (&pound;147). At &pound;147, the 3rd Gen works out at roughly 10p/day after year one.</div></div>
+      <div class="faq-item"><div class="faq-q">What if it doesn&rsquo;t work for me?</div><div class="faq-a">We offer a 14-day money-back guarantee. Email Sales@EnhancedNRG.com and we&rsquo;ll sort it &mdash; no questions asked.</div></div>
+    </div>
+
+    <h3 class="sub">Copy structure &mdash; a small reorder, not a full rewrite</h3>
+    <p>The existing product descriptions are detailed and scientifically grounded &mdash; they don&rsquo;t need to be deleted, just reordered:</p>
+    <table class="fw-table">
+      <thead><tr><th>Order</th><th>Element</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>1st</td><td><strong style="color:var(--text)">Outcome hook</strong> &mdash; 1 line in plain English: what will the buyer be able to do?</td><td>Write new (1 sentence per product type)</td></tr>
+        <tr><td>2nd</td><td><strong style="color:var(--text)">Trust badges</strong> &mdash; money-back, drug-free, chip lifespan</td><td>New element, no copy needed</td></tr>
+        <tr><td>3rd</td><td><strong style="color:var(--text)">Add to Cart button</strong></td><td>Already exists</td></tr>
+        <tr><td>4th</td><td><strong style="color:var(--text)">FAQ accordion</strong> &mdash; 5&ndash;6 questions</td><td>New element &mdash; add once, replicate across all PDPs</td></tr>
+        <tr><td>5th</td><td><strong style="color:var(--text)">Existing description</strong> &mdash; the full scientific explanation</td><td>Already exists &mdash; just moves below the fold</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">04</span> Checklist</div>
+    <h2 class="section-title">Pre-launch to-do list</h2>
+    <p class="section-desc">Everything here is doable in Wix without a developer. Click to tick off as you go.</p>
+    <div class="checklist-section">
+      <div class="checklist-group-label">Homepage &mdash; est. 1&ndash;2 hours</div>
+      <div class="checklist">
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add &ldquo;Shop All Products&rdquo; CTA button to the hero section</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add a plain-English sub-headline to the hero (what NRG+ is, in one sentence)</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Move the 4 category blocks to appear immediately after the hero</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add trust strip below categories: Drug-Free &middot; Non-Invasive &middot; 14-Day Money-Back &middot; UK Company</div></div>
+      </div>
+      <div class="checklist-group-label" style="margin-top:1.75rem">Navigation &mdash; est. 15&ndash;30 minutes</div>
+      <div class="checklist">
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add dropdown to Products nav with the 4 pillar categories as sub-links</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add &ldquo;View All Products&rdquo; as the last dropdown item</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add a &ldquo;Shop the technology &rarr;&rdquo; CTA at the top of The Movement page</div></div>
+      </div>
+      <div class="checklist-group-label" style="margin-top:1.75rem">Product pages &mdash; est. 2&ndash;4 hours (do one first, then replicate)</div>
+      <div class="checklist">
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Write a 1-line outcome hook for each product type (Endurance, Speed, Recovery, Pain Relief&hellip;)</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add trust badge strip (money-back, drug-free, chip lifespan, secure checkout) to every PDP</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Add FAQ accordion to every product page (use the 6 questions in this doc)</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Move the existing long-form description below the FAQ (not above the buy button)</div></div>
+        <div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box"></div><div class="check-label">Confirm guest checkout is enabled in Wix Store Settings</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="later">
+  <div class="wrapper fade-in">
+    <div class="section-eyebrow"><span class="num">05</span> Post-launch</div>
+    <h2 class="section-title">Parked for after launch</h2>
+    <p class="section-desc">Real improvements &mdash; but they need more time than the launch window allows. Revisit these in the weeks after go-live.</p>
+    <div class="launch-badge later">&#x1F4C5; Post-launch</div>
+
+    <h3 class="sub">Social proof &amp; reviews</h3>
+    <div class="later-block">
+      <div class="later-block-label">Month 1</div>
+      <ul class="rec-list">
+        <li class="later-item">Install a review widget (Wix Reviews or Trustpilot) and email all existing customers for reviews &mdash; offer 10% off their next order as incentive</li>
+        <li class="later-item">Replace anonymous homepage testimonials with photos, full names, sport, and social handles</li>
+        <li class="later-item">Embed Instagram or TikTok athlete content directly on product pages</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Product listing improvements</h3>
+    <div class="later-block">
+      <div class="later-block-label">Month 1</div>
+      <ul class="rec-list">
+        <li class="later-item">Add a generation comparison table to the listing page (Tester vs 2nd Gen vs 3rd Gen: price, lifespan, best for)</li>
+        <li class="later-item">Replace the &ldquo;New&rdquo; badge on every product with meaningful labels: &lsquo;Most Popular&rsquo;, &lsquo;Best Seller&rsquo;, etc.</li>
+        <li class="later-item">Move out-of-stock products to the bottom of the listing with an &ldquo;email me when back&rdquo; option</li>
+        <li class="later-item">Add a short guided quiz to the listing page to reduce decision paralysis</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Email &amp; retention</h3>
+    <div class="later-block">
+      <div class="later-block-label">Months 1&ndash;2</div>
+      <ul class="rec-list">
+        <li class="later-item">Set up abandoned cart email automation in Wix Automations &mdash; recovers 5&ndash;15% of abandoned carts</li>
+        <li class="later-item">Set up a post-purchase onboarding email: &ldquo;Welcome to NRG+ &mdash; here&rsquo;s how to get the most from your chip&rdquo;</li>
+        <li class="later-item">Set up a 14-day review request email triggered after each purchase</li>
+        <li class="later-item">Replace the newsletter CTA with a value-exchange offer: e.g. &ldquo;Get our free performance guide + 10% off&rdquo;</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Longer-term</h3>
+    <div class="later-block">
+      <div class="later-block-label">Months 2&ndash;3</div>
+      <ul class="rec-list">
+        <li class="later-item">Build sport-specific landing pages (Runners, Gym Athletes, Golfers, Cyclists) for paid ad campaigns</li>
+        <li class="later-item">Set up a Trustpilot profile &mdash; verified reviews display star ratings in Google search results</li>
+        <li class="later-item">Add cross-sell section on product pages: &ldquo;Customers also bought the Recovery Chip&rdquo;</li>
+        <li class="later-item">Add an order bump at checkout: e.g. &ldquo;Add the Recovery Chip for &pound;95 (save &pound;24)&rdquo;</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrapper">
+    <p><strong>Enhanced NRG+</strong> &middot; Pre-Launch Audit &middot; May 2026</p>
+    <p style="margin-top:.4rem;color:#364d40">enhancednrg.com &middot; For internal use only</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;document.getElementById('progress').style.width=p+'%'});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')}),{threshold:.07});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
